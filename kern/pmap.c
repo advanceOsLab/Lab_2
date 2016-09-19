@@ -94,13 +94,15 @@ boot_alloc(uint32_t n)
 		cprintf("End:%x\n",end);
 		//
 	}
-
+	
 	// Allocate a chunk large enough to hold 'n' bytes, then update
 	// nextfree.  Make sure nextfree is kept aligned
 	// to a multiple of PGSIZE.
 	//
 	// LAB 2: Your code here.
 	//return NULL;
+	if (n > (npages * PGSIZE - nextfree) {
+		panic("boot_alloc(): Out of memory !\n");
 	next = nextfree;
 	nextfree = ROUNDUP((char*)(nextfree + n) , PGSIZE);	
 	return next;
@@ -149,7 +151,8 @@ mem_init(void)
 	// to initialize all fields of each struct PageInfo to 0.
 	// Your code goes here:
 	
-	//pages = (struct PageInfo*) bootalloc(npages*sizeof(struct PageInfo));
+	pages = (struct PageInfo*) boot_alloc(npages * sizeof(struct PageInfo));   // PGSIZE is defined as 4096
+	memset(pages, 0, npages * sizeof(struct PageInfo) )
 	
 	//npages correspond to Amount of physical memory.
 	//////////////////////////////////////////////////////////////////////
@@ -255,10 +258,28 @@ page_init(void)
 	// NB: DO NOT actually touch the physical memory corresponding to
 	// free pages!
 	size_t i;
-	for (i = 1; i < npages_basemem ; i++) {
-		pages[i].pp_ref = 0;
-		pages[i].pp_link = page_free_list;
-		page_free_list = &pages[i];
+	for (i = 1; i < npages ; i++) 
+	{
+		
+		if(i< npages_basemem)	
+		{
+			pages[i].pp_ref = 0;
+			pages[i].pp_link = page_free_list;
+			page_free_list = &pages[i];
+		}		 
+		else if ((i >=IOPHYSMEM/PGSIZE)&&i<(EXTPHYSMEM/PGSIZE))
+		{
+			;//pages[i].pp_ref = 1;
+			//pages[i].pp_link = NULL;
+		}		
+		else if ((i >= EXTPHYSMEM / PGSIZE) && (i <PADDR(boot_alloc (0))/PGSIZE))
+			;//pages[i].pp_ref = 1;		
+		else if (i >=PADDR(boot_alloc(0))/PGSIZE)
+		{
+			pages[i].pp_ref = 0;
+			pages[i].pp_link = page_free_list;
+			page_free_list = &pages[i];
+		}
 	}
 }
 
@@ -277,14 +298,14 @@ page_init(void)
 struct PageInfo *
 page_alloc(int alloc_flags)
 {
-	/*if ((page_free_list.pp_link)!=NULL) 
+	if ((page_free_list->pp_link)!=NULL) 
 	{
         	struct PageInfo *ret = page_free_list;//Returns the first free page
         	page_free_list = page_free_list->pp_link;//keeping the next page as the start of the pages in free list
         	if (alloc_flags & ALLOC_ZERO) 
             	memset(page2kva(ret), 0, PGSIZE);
         	return ret;
-   	}*/
+   	}
     	return NULL;
 }
 
