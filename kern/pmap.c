@@ -315,13 +315,12 @@ page_init(void)
 		}		 
 		else if (        (i >= IOPHYSMEM/PGSIZE)    &&    ( i<(EXTPHYSMEM/PGSIZE) )     )
 		{
-			pages[i].pp_ref = 1;
-			pages[i].pp_link = NULL;
+			
 		}		
 		else if (         (i >= (EXTPHYSMEM / PGSIZE)  )    && (i <   (ROUNDUP(free_mem,PGSIZE))/PGSIZE) - KERNBASE)
 			{
-			pages[i].pp_ref = 1;	
-			pages[i].pp_link = NULL;
+					
+				
 			}	
 		else 
 		{
