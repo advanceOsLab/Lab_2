@@ -319,7 +319,7 @@ page_init(void)
 		}		
 		else if (         (i >= (EXTPHYSMEM / PGSIZE)  )    && (i <   (ROUNDUP(free_mem,PGSIZE))/PGSIZE) - KERNBASE)
 			{
-		//pages[i].pp_ref = 1;		KERNEL DATA+BSS	
+		pages[i].pp_ref = 1;		KERNEL DATA+BSS	
 		//pages[i].pp_link = NULL;			
 				
 			}	
